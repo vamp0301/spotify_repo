@@ -41,12 +41,34 @@ async function createAlbum(req, res) {
     }})
 }
 async function getAllMusics(req, res) {
-    const musics=await musicModel.find().populate("artist","username");
+
+
+    const musics=await musicModel
+    .find()
+    .skip(2)
+    .limit(10)
+    .populate("artist","username");
     res.status(200).json({
         message:"All musics",
         musics:musics,
     })
 
 }
-module.exports={createMusic ,createAlbum,getAllMusics};
+async function getAllAlbums(req, res) {
+    const albums=await albumModel.find().select("title artist").populate("artist","username");
+    res.status(200).json({
+        message:"Albums fetched successfully",
+        albums: albums,
+    })
+}
+async function getAlbumsById(req, res) {
+    const albumId= req.params.albumId;
+    const album=await albumModel.findById(albumId).populate("musics").populate("artist","username email");
+    return res.status(200).json({
+        message:"Album fetched successfully",
+        albums: albums,
+    })
+}
+
+module.exports={createMusic ,createAlbum,getAllMusics, getAllAlbums, getAlbumsById};
 
